@@ -1,6 +1,6 @@
 # Teleconverter
 
-Converts telecom unities to other unities.
+Converts telecom metrics to other metrics.
   
 ### Requirements
 
