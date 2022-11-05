@@ -15,3 +15,6 @@ On Fedora and RHEL based distros:
 ```
 dnf install python3 python3-tkinter
 ```
+
+### References
+https://tkdocs.com/index.html
