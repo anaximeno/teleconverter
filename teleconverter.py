@@ -1,10 +1,11 @@
 import math
 
-class TelecomMetric(object):
-    """Abstract class representing a Telecommunication Metric."""
+
+class TelecomUnit(object):
+    """Abstract class representing a Telecommunication Unit."""
 
     def __init__(self, value: float, symbol: str) -> None:
-        super(TelecomMetric, self).__init__()
+        super(TelecomUnit, self).__init__()
         self.value = value
         self.symbol = symbol
 
@@ -14,82 +15,124 @@ class TelecomMetric(object):
     def __repr__(self) -> str:
         return str(self)
 
-    def db_value(self) -> float:
-        """Returns the value converted in db."""
-        pass
+    def to_dbm(self) -> any:
+        """Returns the value converted in dBm."""
+        pass  # NOTE: should be implemented by subclasses
 
-class DB(TelecomMetric):
-    def __init__(self, value: float) -> None:
-        super().__init__(value, "dB")
 
-    def db_value(self) -> float:
-        return self.value
-
-class DBM(TelecomMetric):
+class DBM(TelecomUnit):
     def __init__(self, value: float) -> None:
         super().__init__(value, "dBm")
 
-    def db_value(self) -> float:
-        return self.value - 30
+    def to_dbm(self) -> TelecomUnit:
+        return self
 
-class DBU(TelecomMetric):
+
+class DB(TelecomUnit):
+    def __init__(self, value: float) -> None:
+        super().__init__(value, "dB")
+
+    def to_dbm(self) -> DBM:
+        return DBM(self.value + 30)
+
+
+class DBU(TelecomUnit):
     def __init__(self, value: float) -> None:
         super().__init__(value, "dBu")
 
-    def db_value(self) -> float:
-        pass #TODO
+    def to_dbm(self) -> DBM:
+        pass  # TODO
 
-class DBA(TelecomMetric):
+
+class DBW(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dBa")
+        super().__init__(value, "dBW")
 
-    def db_value(self) -> float:
-        pass #TODO
+    def to_dbm(self) -> DBM:
+        pass  # TODO
 
-class DBR(TelecomMetric):
+
+class Linear(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dBr")
+        super().__init__(value, "")
 
-    def db_value(self) -> float:
-        pass #TODO
+    def to_dbm(self) -> DBM:
+        pass  # TODO
 
-class Watt(TelecomMetric):
+
+class Watt(TelecomUnit):
+
     def __init__(self, value: float) -> None:
         super().__init__(value, "W")
 
-    def db_value(self) -> float:
-        pass #TODO
+    def to_dbm(self) -> DBM:
+        return DBM(10 * math.log10(self.value / 1000))
 
-class MiliWatt(TelecomMetric):
+    def to_miliwatts(self) -> TelecomUnit:
+        return MiliWatt(self.value * 1000)
+
+    def to_kilowatts(self) -> TelecomUnit:
+        return KiloWatt(self.value / 1000)
+
+
+class MiliWatt(TelecomUnit):
     def __init__(self, value: float) -> None:
         super().__init__(value, "mW")
 
-    def db_value(self) -> float:
-        pass #TODO
+    def to_dbm(self) -> DBM:
+        return self.to_watts().to_dbm()
 
-class Telecalculator(object):
+    def to_watts(self) -> Watt:
+        return Watt(self.value / 1000)
+
+
+class KiloWatt(TelecomUnit):
+    def __init__(self, value: float) -> None:
+        super().__init__(value, "kW")
+
+    def to_dbm(self) -> DBM:
+        return self.to_watts().to_dbm()
+
+    def to_watts(self) -> Watt:
+        return Watt(self.value * 1000)
+
+
+class Teleconverter(object):
+    def __init__(self, value: TelecomUnit) -> None:
+        super(Teleconverter, self).__init__()
+        self._dbm_real_value = value.to_dbm().value
+        self._value = value
+
+    @property
+    def value(self) -> TelecomUnit:
+        return self._value
+
+    def db(self) -> DB:
+        return DB(self._dbm_real_value - 30)
+
+    def dbm(self) -> DBM:
+        return self._dbm_real_value
+
+    def watts(self) -> Watt:
+        return Watt(1000 * (10 ** (self._dbm_real_value / 10)))
+
+    def miliwatts(self) -> MiliWatt:
+        return self.to_watts().to_miliwatts()
+
+    def kilowatts(self) -> KiloWatt:
+        return self.to_watts().to_kilowatts()
+
+    def dbu(self) -> DBU:
+        pass  # TODO
+
+    def linear(self) -> Linear:
+        pass  # TODO
+
+    def dbw(self) -> DBW:
+        pass  # TODO
+
     @classmethod
     def db_from_potency(cls, p0: Watt, p1: Watt) -> DB:
         """Retorna o valor em dB através da relação entre duas pontências,
         `p0` de entrada e `p1` de saída."""
         return DB(10 * math.log10(p1.value / p0.value))
-
-class Teleconverter(object):
-    def __init__(self, value: TelecomMetric) -> None:
-        super(Teleconverter, self).__init__()
-        self.value = value
-
-    def to_db(self) -> DB:
-        return DB(self.value.db_value())
-
-    def to_dbm(self) -> DBM:
-        return DBM(self.value.db_value() + 30)
-
-    def to_dbu(self) -> DBU:
-        pass # TODO
-
-    def to_dbr(self) -> DBR:
-        pass # TODO
-
-    def to_dba(self) -> DBR:
-        pass # TODO
