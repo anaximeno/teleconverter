@@ -21,43 +21,59 @@ from tkinter import Entry
 ########################################################""
 
 # Funcoes
-def search(list, platform):
-    print(len(list))
+def search(list, unidade) -> bool:
     for i in range(len(list)):
-        if list[i] == platform:
+        if list[i] == unidade:
+            print("Existe::")
             print(list[i])
             return True
     return False
 
 
-# def getUni(*arg) -> None:
-#     Label(app, text= "The value at index " + str(uniConversaoList.current()) + " is " + " "+ str(unidadeConversao.get()), font= ('Helvetica 12')).pack()
-
 def converterValor() -> None:
-    # get o valor do combobox
-    valor = unidadeConversao.get()    
-    # Status
-    label_Final = Label(app, text="Converter %s para %s" % (valorEntrada.get(), valor))
-    label_Final.pack()
-
-    # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
-    # uniConversaoList["values"]
-    if 
-
-    # uniConversaoList = lita das unidades, valor = valor selecionado do combobox
-    # valorEntrada = valor entrado pelo utilizador
-    print(search(existeF, valor))
-    if search(uniConversaoList["values"], valor):
-        # se alguem escolher a mesma unidade entrada é igual a saida
-        # Apresentar o valor
-        label_Final2 = Label(app, text=":tera. %s %s" % (valorEntrada.get(), valor))
-        label_Final2.pack()
+    # get o valor do combobox (valorCombobox)
+    valorCb = unidadeConversao.get()    
+    # se valor selecionado no combobox estiver vazio, i.e, se nao for selecionado um valor
+    if not valorCb :
+        print("valorCb")
+        print(valorCb)
+        showinfo(
+            title='Importante',
+            message=f'Selecione a unidade de conversão!'
+        )
+        
     else:
-        # calculo final
-        valorFinal = 12321322
-        # Apresentar o valor
-        label_Final2 = Label(app, text=":. %f %s" % (float(valorFinal), valor))
-        label_Final2.pack()
+        # Status
+        label_Final = Label(app, text="Converter %s para %s" % (valorEntrada.get(), valorCb))
+        label_Final.pack()
+
+        # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
+        # uniConversaoList["values"]
+        # o valor deve ser separado por "."
+        x = valorEntrada.get().split(".")
+        # if 
+
+        # uniConversaoList = lita das unidades, valor = valor selecionado do combobox
+        # valorEntrada = valor entrado pelo utilizador
+        # x[1] = unidade do valor
+        print(search(x[1].lower(), valorCb))
+        if x[1].lower() == valorCb.lower() and search(uniConversaoList["values"], x[1].lower()):
+            # se alguem escolher a mesma unidade entrada é igual a saida
+            # Apresentar o valor
+            label_Final2 = Label(app, text=":= %s %s" % (x[0], valorCb))
+            label_Final2.pack()
+        # se as unidades de conversao sao diferentes faz o calculo de conversao
+        elif search(uniConversaoList["values"], x[1].lower()) and x[1].lower() != valorCb.lower():
+            print("x[1] == unidadeConversao.get()")
+            print(x[1])
+            print(valorCb.lower())
+            # calculo final
+            # aqui ira ficar a funcao de conversao
+            # valorFinal = mainConvertor(valorEntrada, UnidadeValorEntrada, converterPara)
+            valorFinal = 12321322
+            # Apresentar o valor
+            label_Final2 = Label(app, text=":. %f %s" % (float(valorFinal), valorCb))
+            label_Final2.pack()
     # pass
 
 
@@ -93,13 +109,14 @@ label = ttk.Label(text="Entre com valor:.")
 label.pack(fill=tk.X, padx=10, pady=10)
 
 valorEntrada = Entry(app)
+valorEntrada.focus()
 valorEntrada.pack(padx=10, pady=10)
 
 # cria combobox de selecao
 unidadeConversao = tk.StringVar()
 uniConversaoList = ttk.Combobox(app, textvariable=unidadeConversao)
 # get first 3 letters of every month name
-uniConversaoList['values'] = ['dBm','dBu','dBr','Wat','mWt']
+uniConversaoList['values'] = ['dbm','dbu','dbr','wat','mwt']
 
 # prevent typing a value
 uniConversaoList['state'] = 'readonly'
@@ -107,7 +124,7 @@ uniConversaoList['state'] = 'readonly'
 # place the widget
 uniConversaoList.pack(padx=5, pady=5)
 
-# apresenta "status" antes de proceguir
+# apresenta "status" antes de prosseguir
 label = ttk.Label(text="Valor convertido:")
 label.pack(fill=tk.X, padx=5, pady=5)
 
@@ -116,14 +133,14 @@ btn.pack()
 
 
 # bind the selected value changes
-def uni_changed(event):
-    """ handle the uni changed event """
-    showinfo(
-        title='Resultado',
-        message=f'Selecionou: {unidadeConversao.get()}!'
-    )
+# def uni_changed(event):
+#     """ handle the uni changed event """
+#     showinfo(
+#         title='Resultado',
+#         message=f'Selecionou: {unidadeConversao.get()}!'
+#     )
 
-uniConversaoList.bind('<<ComboboxSelected>>', uni_changed)
+# uniConversaoList.bind('<<ComboboxSelected>>', uni_changed)
 
 
 app.mainloop()
