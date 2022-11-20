@@ -46,22 +46,22 @@ class TelecomUnit(object):
         raise ValueError()
 
     def __lt__(self, other: Self) -> bool:
-        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
+        if isinstance(other, type(self)) or isinstance(self, type(other)):
             return self._value < other._value
         raise ValueError()
 
     def __le__(self, other: Self) -> bool:
-        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
+        if isinstance(other, type(self)) or isinstance(self, type(other)):
             return self._value <= other._value
         raise ValueError()
 
     def __gt__(self, other: Self) -> bool:
-        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
+        if isinstance(other, type(self)) or isinstance(self, type(other)):
             return self._value > other._value
         raise ValueError()
 
     def __ge__(self, other: Self) -> bool:
-        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
+        if isinstance(other, type(self)) or isinstance(self, type(other)):
             return self._value >= other._value
         raise ValueError()
 
