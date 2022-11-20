@@ -1,6 +1,5 @@
-from teleconverter import *
+import ui.teleconverter
 
 if __name__ == '__main__':
-    a = DB(90)
-    b = Teleconverter(a).dbm()
-    print(f'{a} = {b}')
+    app = ui.teleconverter.Application()
+    app.run()
