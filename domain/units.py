@@ -26,77 +26,73 @@ class TelecomUnit(object):
         return str(self)
 
     def __add__(self, other: Self) -> Self:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return T(self._value + other._value)
         raise ValueError()
 
     def __sub__(self, other: Self) -> Self:
-        T = type(self)
-        if isinstance(other, T):
-            return Watt(self._value - other._value)
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
+            return T(self._value - other._value)
         raise ValueError()
 
     def __truediv__(self, other: Self) -> Self:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return T(self._value / other._value)
         raise ValueError()
 
     def __mul__(self, other: Self) -> Self:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return T(self._value * other._value)
         raise ValueError()
 
     def __lt__(self, other: Self) -> bool:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return self._value < other._value
         raise ValueError()
 
     def __le__(self, other: Self) -> bool:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return self._value <= other._value
         raise ValueError()
 
     def __gt__(self, other: Self) -> bool:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return self._value > other._value
         raise ValueError()
 
     def __ge__(self, other: Self) -> bool:
-        T = type(self)
-        if isinstance(other, T):
+        if isinstance(other, T := type(self)) or isinstance(self, T := type(other)):
             return self._value >= other._value
         raise ValueError()
 
-
-class DB(TelecomUnit):
+class DBM(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dB")
+        super().__init__(value, "dBM")
 
-
-class Bell(DB):
+class Bell(DBM):
     def __init__(self, value: float) -> None:
-        super().__init__(value * 10)
-        self._symbol = "B"
+        super().__init__(10 * value + 30)
+
+    @property
+    def symbol(self) -> str:
+        return "B"
 
     @property
     def value(self) -> float:
-        return super().value / 10
+        return (super().value - 30)  / 10
 
 
-class DBM(DB):
+class DB(DBM):
     def __init__(self, value: float) -> None:
-        super().__init__(value - 30)
-        self._symbol = f'{self._symbol}M'
+        super().__init__(value + 30)
+
+    @property
+    def symbol(self) -> str:
+        return f'dB'
 
     @property
     def value(self) -> float:
-        return super().value + 30
+        return super().value - 30
 
 
 class DBW(TelecomUnit):
@@ -124,13 +120,33 @@ class Volt(TelecomUnit):
         super().__init__(value, "V")
 
 
-class MiliVolt(TelecomUnit):
-    def __init__(self, value: float, symbol: str) -> None:
-        super().__init__(value, symbol)
+class MiliVolt(Volt):
+    def __init__(self, value: float) -> None:
+        super().__init__(value / 1000)
+
+    @property
+    def symbol(self) -> str:
+        return f'm{super().symbol}'
+
+    @property
+    def value(self) -> float:
+        return super().value * 1000
+
+
+class KiloVolt(Volt):
+    def __init__(self, value: float) -> None:
+        super().__init__(value * 1000)
+
+    @property
+    def symbol(self) -> str:
+        return f'k{super().symbol}'
+
+    @property
+    def value(self) -> float:
+        return super().value / 1000
 
 
 class Watt(TelecomUnit):
-
     def __init__(self, value: float) -> None:
         super().__init__(value, "W")
 
@@ -138,7 +154,10 @@ class Watt(TelecomUnit):
 class MiliWatt(Watt):
     def __init__(self, value: float) -> None:
         super().__init__(value / 1000)
-        self._symbol = f'm{self._symbol}'
+
+    @property
+    def symbol(self) -> str:
+        return f'm{super().symbol}'
 
     @property
     def value(self) -> float:
@@ -148,7 +167,10 @@ class MiliWatt(Watt):
 class KiloWatt(Watt):
     def __init__(self, value: float) -> None:
         super().__init__(value * 1000)
-        self._symbol = f'k{self._symbol}'
+
+    @property
+    def symbol(self) -> str:
+        return f'k{super().symbol}'
 
     @property
     def value(self) -> float:
