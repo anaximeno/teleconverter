@@ -1,7 +1,8 @@
 # Teleconverter
 
 Converts telecom metrics to other metrics.
-  
+
+
 ### Requirements
 
 * Python >= 3.10
@@ -14,6 +15,14 @@ apt install python3 python3-tk
 On Fedora and RHEL based distros:
 ```
 dnf install python3 python3-tkinter
+```
+
+### Execute
+
+After installing the dependendencies, just run the program with:
+
+```
+python3 main.py
 ```
 
 ### References
