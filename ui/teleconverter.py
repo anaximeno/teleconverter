@@ -1,3 +1,8 @@
+########################################################""
+# GUI PARA CONVERTER UNIDADES (dB, dBm, dBU, W, mW, etc)
+#:. Ailton Duarte <coyas>
+########################################################""
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
@@ -6,18 +11,7 @@ from tkinter import Label
 from tkinter import Button
 from tkinter import Entry
 
-# if __name__ == '__main__':
-#     a = DB(90)
-#     b = Teleconverter(a).to_dbm()
-#     print(f'{a} = {b}')
 
-
-########################################################""
-# GUI PARA CONVERTER UNIDADES (dB, dBm, dBU, W, mW, etc)
-#:. Ailton Duarte <coyas>
-########################################################""
-
-# Funcoes
 def search(list, platform):
     print(len(list))
     for i in range(len(list)):
@@ -26,40 +20,41 @@ def search(list, platform):
             return True
     return False
 
-
-# def getUni(*arg) -> None:
-#     Label(app, text= "The value at index " + str(self.convertion_unit_list.current()) + " is " + " "+ str(unidadeConversao.get()), font= ('Helvetica 12')).pack()
-
-
-    # pass
-
-
 class Application(tk.Tk):
-    def __init__(self, title: str = "Kraki - Conversor de Unidades") -> None:
+    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 480, height: int = 320) -> None:
         super(Application, self).__init__()
-        self._title = title
 
-        # Meno do app
+        self._title = title
+        self._description = description
+        self._version = version
+        self._width = width
+        self._height = height
+
+        self.geometry(f'{self._width}x{self._height}')
+        self.resizable(False, False)
+        self.title(self._title)
+
+        self.__create_menu()
+        self.__create_body()
+
+    def run(self) -> None:
+        self.mainloop()
+
+    def __create_menu(self) -> None:
         self.menu = Menu(self)
 
         new_item = Menu(self.menu)
         new_item.add_command(label='Contact us')
-        new_item.add_command(label='About kraki v0.01')
+        new_item.add_command(label=f'{self._title} {self._version}')
 
+        self.menu.add_cascade(label='About', menu=new_item)
         self.menu.add_cascade(label='File')
         self.menu.add_cascade(label='Config')
-        self.menu.add_cascade(label='About', menu=new_item)
 
         self.config(menu=self.menu)
-        ## fim do meno do app
 
-        # config da janela app
-        self.geometry('405x600')
-        self.resizable(False, False)
-        self.title(self._title)
-
-        # label
-        self.body_title_label = ttk.Label(text="CONVERSOR DE UNIDADES", font="Arial 20 bold")
+    def __create_body(self):
+        self.body_title_label = ttk.Label(text=self._description, font="Arial 20 bold")
         self.body_title_label.pack(fill=tk.X, padx=20, pady=20)
 
         self.entry_value_label = ttk.Label(text="Entre com valor:.")
@@ -71,6 +66,7 @@ class Application(tk.Tk):
         # cria combobox de selecao
         self.convertion_unit = tk.StringVar()
         self.convertion_unit_list = ttk.Combobox(self, textvariable=self.convertion_unit)
+
         # get first 3 letters of every month name
         self.convertion_unit_list['values'] = ['dBm','dBu','dBr','Wat','mWt'] # TODO: get this from the domain
 
@@ -88,9 +84,6 @@ class Application(tk.Tk):
         self.convet_button = Button(self, text="Converter", command=self.convert)
         self.convet_button.pack()
 
-    def run(self) -> None:
-        self.mainloop()
-
     # bind the selected value changes
     def uni_changed(self, event) -> None:
         """ handle the uni changed event """
@@ -102,6 +95,7 @@ class Application(tk.Tk):
     def convert(self) -> None:
         # get o valor do combobox
         valor = self.convertion_unit.get()
+
         # Status
         label_Final = Label(self, text="Converter %s para %s" % (self.entry_value.get(), valor))
         label_Final.pack()
