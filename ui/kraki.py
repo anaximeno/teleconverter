@@ -66,15 +66,14 @@ class Application(tk.Tk):
         self.entry_value = Entry(self)
         self.entry_value.pack(padx=10, pady=10)
 
-        # cria combobox de selecao
         self.convertion_unit = tk.StringVar()
         self.convertion_unit_list = ttk.Combobox(
             self, textvariable=self.convertion_unit)
         self.convertion_unit_list['values'] = self._conversible_units_list
         self.convertion_unit_list['state'] = 'readonly'
         self.convertion_unit_list.pack(padx=5, pady=5)
-        self.convertion_unit_list.bind(
-            '<<ComboboxSelected>>', self.uni_changed)
+        # self.convertion_unit_list.bind(
+        #     '<<ComboboxSelected>>', self.uni_changed)
 
         self.converted_value_label = ttk.Label(text="Valor convertido:")
         self.converted_value_label.pack(fill=tk.X, padx=5, pady=5)
@@ -83,7 +82,6 @@ class Application(tk.Tk):
             self, text="Converter", command=self.convert)
         self.convert_button.pack()
 
-    # bind the selected value changes
     def uni_changed(self, event) -> None:
         """ handle the uni changed event """
         showinfo(
@@ -91,18 +89,27 @@ class Application(tk.Tk):
             message=f'Selecionou: {self.convertion_unit.get()}!'
         )
 
+    def _alert_user(self, message: str) -> str:
+        return showinfo(title='Alerta!', message=message)
+
     def convert(self) -> None:
-        # get o valor do combobox
-        valor = self.convertion_unit.get()
+        typeFrom = self.convertion_unit.get()
+        valueFrom = self.entry_value.get()
 
-        # Status
-        label_Final = Label(self, text="Converter %s para %s" %
-                            (self.entry_value.get(), valor))
-        label_Final.pack()
+        print(valueFrom, typeFrom)
 
-        # calculo final
-        valorFinal = 12321322
-        # Apresentar o valor
-        label_Final2 = Label(self, text=":. %f %s" %
-                             (float(valorFinal), valor))
-        label_Final2.pack()
+        if not valueFrom.isnumeric():
+            self._alert_user('Precisa introduzir um valor válido para a conversão!')
+            return
+        elif typeFrom == '':
+            self._alert_user('Precisa escolher uma unidade para a conversão!')
+            return
+
+        value = self._objectify(valueFrom, typeFrom)
+        print(value)
+
+    def _objectify(self, value: float | str, unit_ref: str) -> any or None:
+        """Converts the `value` param into a unit value object if it is possible, else return None."""
+        if len(self._conversible_units_list) > 0 and unit_ref in self._conversible_units_list:
+            return self.units.units_mapper[unit_ref](float(value))
+        return None
