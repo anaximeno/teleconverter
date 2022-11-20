@@ -7,7 +7,7 @@ from tkinter.messagebox import showinfo
 from tkinter import Menu
 from tkinter import Label
 from tkinter import Button
-from tkinter import Entry
+from tkinter import Entry 
 
 # if __name__ == '__main__':
 #     a = DB(90)

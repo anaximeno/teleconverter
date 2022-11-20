@@ -12,7 +12,7 @@ from tkinter import Button
 from tkinter import Entry
 
 
-def search(list, platform):
+def search(list, platform) -> bool:
     print(len(list))
     for i in range(len(list)):
         if list[i] == platform:
@@ -21,7 +21,7 @@ def search(list, platform):
     return False
 
 class Application(tk.Tk):
-    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 480, height: int = 320) -> None:
+    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 480, height: int = 600) -> None:
         super(Application, self).__init__()
 
         self._title = title
@@ -61,6 +61,7 @@ class Application(tk.Tk):
         self.entry_value_label.pack(fill=tk.X, padx=10, pady=10)
 
         self.entry_value = Entry(self)
+        self.entry_value.focus()
         self.entry_value.pack(padx=10, pady=10)
 
         # cria combobox de selecao
@@ -68,14 +69,14 @@ class Application(tk.Tk):
         self.convertion_unit_list = ttk.Combobox(self, textvariable=self.convertion_unit)
 
         # get first 3 letters of every month name
-        self.convertion_unit_list['values'] = ['dBm','dBu','dBr','Wat','mWt'] # TODO: get this from the domain
+        self.convertion_unit_list['values'] = ['dbm','dbu','dbr','wat','mwt'] # TODO: get this from the domain
 
         # prevent typing a value
         self.convertion_unit_list['state'] = 'readonly'
 
         # place the widget
         self.convertion_unit_list.pack(padx=5, pady=5)
-        self.convertion_unit_list.bind('<<ComboboxSelected>>', self.uni_changed)
+        # self.convertion_unit_list.bind('<<ComboboxSelected>>', self.uni_changed)
 
         # apresenta "status" antes de proceguir
         self.converted_value_label = ttk.Label(text="Valor convertido:")
@@ -85,36 +86,48 @@ class Application(tk.Tk):
         self.convet_button.pack()
 
     # bind the selected value changes
-    def uni_changed(self, event) -> None:
-        """ handle the uni changed event """
-        showinfo(
-            title='Resultado',
-            message=f'Selecionou: {self.convertion_unit.get()}!'
-        )
+    # def uni_changed(self, event) -> None:
+    #     """ handle the uni changed event """
+    #     showinfo(
+    #         title='Resultado',
+    #         message=f'Selecionou: {self.convertion_unit.get()}!'
+    #     )
 
     def convert(self) -> None:
         # get o valor do combobox
         valor = self.convertion_unit.get()
 
-        # Status
-        label_Final = Label(self, text="Converter %s para %s" % (self.entry_value.get(), valor))
-        label_Final.pack()
-
-        # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
-        # self.convertion_unit_list["values"]
-        # if
-
-        # self.convertion_unit_list = lita das unidades, valor = valor selecionado do combobox
-        # valorEntrada = valor entrado pelo utilizador
-        # print(search(existeF, valor))
-        if search(self.convertion_unit_list["values"], valor):
-            # se alguem escolher a mesma unidade entrada é igual a saida
-            # Apresentar o valor
-            label_Final2 = Label(self, text=":tera. %s %s" % (self.entry_value.get(), valor))
-            label_Final2.pack()
+        if not valor :
+            # print("valor")
+            # print(valor)
+            showinfo(
+                title='Importante!',
+                message=f'Selecione a unidade de conversão!'
+            )
         else:
-            # calculo final
-            valorFinal = 12321322
-            # Apresentar o valor
-            label_Final2 = Label(self, text=":. %f %s" % (float(valorFinal), valor))
-            label_Final2.pack()
+            # Status
+            label_Final = Label(self, text="Converter %s para %s" % (self.entry_value.get(), valor))
+            label_Final.pack()
+
+            # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
+            # uniConversaoList["values"]
+            # o valor deve ser separado por "."
+            x = self.entry_value.get().split(".")
+
+            # self.convertion_unit_list = lita das unidades, valor = valor selecionado do combobox
+            # valorEntrada = valor entrado pelo utilizador
+            # print(search(existeF, valor))
+            # if search(self.convertion_unit_list["values"], valor):
+            if x[1].lower() == valor.lower() and search(self.convertion_unit_list['values'], x[1].lower()):
+                # se alguem escolher a mesma unidade entrada é igual a saida
+                # Apresentar o valor
+                label_Final2 = Label(self, text="::= %s %s" % (x[0], valor))
+                label_Final2.pack()
+            elif search(self.convertion_unit_list['values'], x[1].lower()) and x[1].lower() != valor.lower():
+                # calculo final
+                # aqui ira ficar a funcao de conversao
+                # valorFinal = mainConvertor(valorEntrada, UnidadeValorEntrada, converterPara)
+                valorFinal = 12321322
+                # Apresentar o valor
+                label_Final2 = Label(self, text="::= %f %s" % (float(valorFinal), valor))
+                label_Final2.pack()
