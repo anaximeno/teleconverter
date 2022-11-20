@@ -1,5 +1,5 @@
-import ui.teleconverter
+import ui.kraki
 
 if __name__ == '__main__':
-    app = ui.teleconverter.Application()
+    app = ui.kraki.Application()
     app.run()
