@@ -65,9 +65,11 @@ class TelecomUnit(object):
             return self._value >= other._value
         raise ValueError()
 
+
 class DBM(TelecomUnit):
     def __init__(self, value: float) -> None:
         super().__init__(value, "dBM")
+
 
 class Bell(DBM):
     def __init__(self, value: float) -> None:
@@ -79,7 +81,7 @@ class Bell(DBM):
 
     @property
     def value(self) -> float:
-        return (super().value - 30)  / 10
+        return (super().value - 30) / 10
 
 
 class DB(DBM):
@@ -175,3 +177,6 @@ class KiloWatt(Watt):
     @property
     def value(self) -> float:
         return super().value / 1000
+
+
+units_mapper: dict[str, TelecomUnit] = dict(dB=DB, dBM=DBM)

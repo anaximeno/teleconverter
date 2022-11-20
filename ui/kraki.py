@@ -1,8 +1,3 @@
-########################################################""
-# GUI PARA CONVERTER UNIDADES (dB, dBm, dBU, W, mW, etc)
-#:. Ailton Duarte <coyas>
-########################################################""
-
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
@@ -12,15 +7,11 @@ from tkinter import Button
 from tkinter import Entry
 
 
-def search(list, platform):
-    print(len(list))
-    for i in range(len(list)):
-        if list[i] == platform:
-            print(list[i])
-            return True
-    return False
-
 class Application(tk.Tk):
+    teleconverter: any = None
+    telecalculator: any = None
+    units: any = None
+
     def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 480, height: int = 320) -> None:
         super(Application, self).__init__()
 
@@ -34,8 +25,19 @@ class Application(tk.Tk):
         self.resizable(False, False)
         self.title(self._title)
 
-        self.__create_menu()
+        # self.__create_menu()
         self.__create_body()
+
+    @classmethod
+    def inject(cls, units: any, teleconverter: any, telecalculator: any) -> None:
+        """Inject dependencies from domain or other submodules of this project."""
+        cls.teleconverter = teleconverter
+        cls.telecalculator = telecalculator
+        cls.units = units
+
+    @property
+    def _conversible_units_list(self) -> list[str]:
+        return list(self.units.units_mapper.keys()) if self.units is not None else []
 
     def run(self) -> None:
         self.mainloop()
@@ -54,7 +56,8 @@ class Application(tk.Tk):
         self.config(menu=self.menu)
 
     def __create_body(self):
-        self.body_title_label = ttk.Label(text=self._description, font="Arial 20 bold")
+        self.body_title_label = ttk.Label(
+            text=self._description, font="Arial 20 bold")
         self.body_title_label.pack(fill=tk.X, padx=20, pady=20)
 
         self.entry_value_label = ttk.Label(text="Entre com valor:.")
@@ -65,24 +68,20 @@ class Application(tk.Tk):
 
         # cria combobox de selecao
         self.convertion_unit = tk.StringVar()
-        self.convertion_unit_list = ttk.Combobox(self, textvariable=self.convertion_unit)
-
-        # get first 3 letters of every month name
-        self.convertion_unit_list['values'] = ['dBm','dBu','dBr','Wat','mWt'] # TODO: get this from the domain
-
-        # prevent typing a value
+        self.convertion_unit_list = ttk.Combobox(
+            self, textvariable=self.convertion_unit)
+        self.convertion_unit_list['values'] = self._conversible_units_list
         self.convertion_unit_list['state'] = 'readonly'
-
-        # place the widget
         self.convertion_unit_list.pack(padx=5, pady=5)
-        self.convertion_unit_list.bind('<<ComboboxSelected>>', self.uni_changed)
+        self.convertion_unit_list.bind(
+            '<<ComboboxSelected>>', self.uni_changed)
 
-        # apresenta "status" antes de proceguir
         self.converted_value_label = ttk.Label(text="Valor convertido:")
         self.converted_value_label.pack(fill=tk.X, padx=5, pady=5)
 
-        self.convet_button = Button(self, text="Converter", command=self.convert)
-        self.convet_button.pack()
+        self.convert_button = Button(
+            self, text="Converter", command=self.convert)
+        self.convert_button.pack()
 
     # bind the selected value changes
     def uni_changed(self, event) -> None:
@@ -97,24 +96,13 @@ class Application(tk.Tk):
         valor = self.convertion_unit.get()
 
         # Status
-        label_Final = Label(self, text="Converter %s para %s" % (self.entry_value.get(), valor))
+        label_Final = Label(self, text="Converter %s para %s" %
+                            (self.entry_value.get(), valor))
         label_Final.pack()
 
-        # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
-        # self.convertion_unit_list["values"]
-        # if
-
-        # self.convertion_unit_list = lita das unidades, valor = valor selecionado do combobox
-        # valorEntrada = valor entrado pelo utilizador
-        # print(search(existeF, valor))
-        if search(self.convertion_unit_list["values"], valor):
-            # se alguem escolher a mesma unidade entrada é igual a saida
-            # Apresentar o valor
-            label_Final2 = Label(self, text=":tera. %s %s" % (self.entry_value.get(), valor))
-            label_Final2.pack()
-        else:
-            # calculo final
-            valorFinal = 12321322
-            # Apresentar o valor
-            label_Final2 = Label(self, text=":. %f %s" % (float(valorFinal), valor))
-            label_Final2.pack()
+        # calculo final
+        valorFinal = 12321322
+        # Apresentar o valor
+        label_Final2 = Label(self, text=":. %f %s" %
+                             (float(valorFinal), valor))
+        label_Final2.pack()
