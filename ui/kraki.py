@@ -78,20 +78,12 @@ class Application(tk.Tk):
         # get first 3 letters of every month name
         # self.convertion_unit_list['values'] = ['dbm','dbu','dbr','wat','mwt'] # TODO: get this from the domain
 
-        # prevent typing a value
-
-        self.convertion_unit_list = ttk.Combobox(
-            self, textvariable=self.convertion_unit)
+        self.convertion_unit_list = ttk.Combobox(self, textvariable=self.convertion_unit)
         self.convertion_unit_list['values'] = self._conversible_units_list
-# >>>>>>> df734e271eab60be1118ede2aa3b3f0ce51498b4
+        # prevent typing a value
         self.convertion_unit_list['state'] = 'readonly'
         self.convertion_unit_list.pack(padx=5, pady=5)
-# <<<<<<< HEAD
         # self.convertion_unit_list.bind('<<ComboboxSelected>>', self.uni_changed)
-# =======
-        # self.convertion_unit_list.bind(
-        #     '<<ComboboxSelected>>', self.uni_changed)
-# >>>>>>> df734e271eab60be1118ede2aa3b3f0ce51498b4
 
         self.converted_value_label = ttk.Label(text="Valor convertido:")
         self.converted_value_label.pack(fill=tk.X, padx=5, pady=5)
@@ -100,7 +92,6 @@ class Application(tk.Tk):
             self, text="Converter", command=self.convert)
         self.convert_button.pack()
 
-# <<<<<<< HEAD
     # bind the selected value changes
     # def uni_changed(self, event) -> None:
     #     """ handle the uni changed event """
@@ -108,14 +99,6 @@ class Application(tk.Tk):
     #         title='Resultado',
     #         message=f'Selecionou: {self.convertion_unit.get()}!'
     #     )
-# =======
-#     def uni_changed(self, event) -> None:
-#         """ handle the uni changed event """
-#         showinfo(
-#             title='Resultado',
-#             message=f'Selecionou: {self.convertion_unit.get()}!'
-#         )
-# >>>>>>> df734e271eab60be1118ede2aa3b3f0ce51498b4
 
     def _alert_user(self, message: str) -> str:
         return showinfo(title='Alerta!', message=message)
@@ -124,28 +107,32 @@ class Application(tk.Tk):
         typeFrom = self.convertion_unit.get()
         valueFrom = self.entry_value.get()
 
-# <<<<<<< HEAD
-        if not typeFrom :
-            # print("typeFrom")
-            # print(typeFrom)
-            showinfo(
-                title='Importante!',
-                message=f'Selecione a unidade de conversão!'
-            )
+        print("Dados:.")
+        print(typeFrom)
+        print(valueFrom)
+
+        # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
+        # uniConversaoList["values"]
+        # o valor deve ser separado por "."
+        x = self.entry_value.get().split(".") # ou valueFrom.split(".") ou ...
+
+        print(valueFrom, typeFrom)
+        # if not valueFrom.isnumeric():
+        if not valueFrom:
+            self._alert_user('Precisa introduzir um valor válido para a conversão!')
+            return
+        elif typeFrom == '':
+            self._alert_user('Precisa escolher uma unidade para a conversão!')
+            return
         else:
             # Status
             label_Final = Label(self, text="Converter %s para %s" % (valueFrom, typeFrom))
             label_Final.pack()
 
-            # se os ultimos 3 digitos do valor de entrada for um valor da lista combobox estao converte
-            # uniConversaoList["values"]
-            # o valor deve ser separado por "."
-            x = self.entry_value.get().split(".") # ou valueFrom.split(".") ou ...
-
             # self.convertion_unit_list = lita das unidades, valor = valor selecionado do combobox
             # valorEntrada = valor entrado pelo utilizador
-            # print(search(existeF, valor))
             # if search(self.convertion_unit_list["values"], valor):
+            # para isso todo valor tem k estar a minuscula
             if x[1].lower() == typeFrom.lower() and search(self.convertion_unit_list['values'], x[1].lower()):
                 # se alguem escolher a mesma unidade entrada é igual a saida
                 # Apresentar o valor
@@ -159,17 +146,8 @@ class Application(tk.Tk):
                 # Apresentar o valor
                 label_Final2 = Label(self, text="::= %f %s" % (float(valorFinal), typeFrom))
                 label_Final2.pack()
-# ======
-        print(valueFrom, typeFrom)
 
-        if not valueFrom.isnumeric():
-            self._alert_user('Precisa introduzir um valor válido para a conversão!')
-            return
-        elif typeFrom == '':
-            self._alert_user('Precisa escolher uma unidade para a conversão!')
-            return
-
-        value = self._objectify(valueFrom, typeFrom)
+        value = self._objectify(x[0], typeFrom)
         print(value)
 
     def _objectify(self, value: float | str, unit_ref: str) -> any or None:
@@ -177,4 +155,4 @@ class Application(tk.Tk):
         if len(self._conversible_units_list) > 0 and unit_ref in self._conversible_units_list:
             return self.units.units_mapper[unit_ref](float(value))
         return None
-# >>>>>>> df734e271eab60be1118ede2aa3b3f0ce51498b4
+
