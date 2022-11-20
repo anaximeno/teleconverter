@@ -1,4 +1,4 @@
-from teleconverter import *
+
 
 # pacotes adicionais
 import tkinter as tk

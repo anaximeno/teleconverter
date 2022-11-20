@@ -21,7 +21,7 @@ def search(list, platform) -> bool:
     return False
 
 class Application(tk.Tk):
-    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 480, height: int = 600) -> None:
+    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 405, height: int = 600) -> None:
         super(Application, self).__init__()
 
         self._title = title
@@ -47,9 +47,9 @@ class Application(tk.Tk):
         new_item.add_command(label='Contact us')
         new_item.add_command(label=f'{self._title} {self._version}')
 
-        self.menu.add_cascade(label='About', menu=new_item)
         self.menu.add_cascade(label='File')
         self.menu.add_cascade(label='Config')
+        self.menu.add_cascade(label='About', menu=new_item)
 
         self.config(menu=self.menu)
 
