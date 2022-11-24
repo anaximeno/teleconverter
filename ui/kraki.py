@@ -137,7 +137,7 @@ class Application(tk.Tk):
         elif widget == self.SECOND_ENTRY_ID_NAME:
             self.label_2.config(text=INVALID_MESSAGE if not valid else '')
 
-        return self._convert(entry if entry != '{}' else '', widget) if valid else valid
+        return self._convert('' if entry == '{}' or entry == '-' else entry, widget) if valid else valid
 
     def _handle_entry_unit_selected(self, _):
         convert_to_unit = self.select_2.get()
@@ -153,6 +153,8 @@ class Application(tk.Tk):
         return None
 
     def _is_valid_number(self, value: str) -> bool:
+        if value.startswith('-'):
+            value = value[1:] if len(value) > 1 else '0'
         if '.' in value and len((_vals := value.split('.'))) == 2:
             return _vals[0].isnumeric() and (_vals[1].isnumeric() or _vals[1] == '')
         return value.isnumeric()
