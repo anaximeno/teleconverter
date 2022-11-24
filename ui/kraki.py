@@ -82,7 +82,7 @@ class Application(tk.Tk):
         self.entry_2.grid(row=3, column=1)
         self.select_2_value = tk.StringVar()
         self.select_2 = ttk.Combobox(self, textvariable=self.select_2_value, width=5, font=f"{self.DEFAULT_FONT} 12")
-        self.select_2['values'] = self._conversible_units_list
+        self.select_2['values'] = self._unit_available_convertions(self._conversible_units_list[0]) if self._conversible_units_list else []
         self.select_2.grid(row=3, column=2)
         self.select_2.config(state="readonly")
         self.select_2.bind('<<ComboboxSelected>>', self._handle_entry_unit_selected)
