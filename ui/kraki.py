@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+
 class Application(tk.Tk):
     FIRST_ENTRY_ID_NAME = "entry_1"
     SECOND_ENTRY_ID_NAME = "entry_2"
@@ -110,6 +111,8 @@ class Application(tk.Tk):
 
                 if value_from and (convert := self._get_convertion_method(convert_from_unit, convert_to_unit)):
                     result = convert(value_from).value
+                    # result = round(result, self._number_of_decimal_places(value))
+                    result = int(result) if int(result) == result else result
                 else:
                     self._alert_user(f'Erro durante a converção de {convert_from_unit!r} para {convert_to_unit!r}')
                     return False
@@ -156,3 +159,8 @@ class Application(tk.Tk):
 
     def _handle_entry_2_key_event(self, e) -> str:
         return "break"
+
+    def _number_of_decimal_places(self, value) -> int:
+        if not self._is_valid_number(value) or not '.' in value:
+            return 0
+        return len(value.split('.')[1])
