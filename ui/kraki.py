@@ -16,7 +16,7 @@ def search(list, platform) -> bool:
     return False
 
 class Application(tk.Tk):
-    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 405, height: int = 600) -> None:
+    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 600, height: int = 600) -> None:
         super(Application, self).__init__()
 
         self._title = title
@@ -62,35 +62,44 @@ class Application(tk.Tk):
     def __create_body(self):
         self.body_title_label = ttk.Label(
             text=self._description, font="Arial 20 bold")
-        self.body_title_label.pack(fill=tk.X, padx=20, pady=20)
+        self.body_title_label.grid(sticky='we', padx=5, pady=5)
 
         self.entry_value_label = ttk.Label(text="Entre com valor:.")
-        self.entry_value_label.pack(fill=tk.X, padx=10, pady=10)
+        self.entry_value_label.grid(row=2, column=0)
 
         self.entry_value = Entry(self)
         self.entry_value.focus()
-        self.entry_value.pack(padx=10, pady=10)
+        self.entry_value.grid(padx=10, pady=10,row=3, column=0)
 
         self.convertion_unit = tk.StringVar()
+
+        self.convertion_unit_list_entry = ttk.Combobox(self, textvariable=self.convertion_unit)
+        self.convertion_unit_list_entry['values'] = self._conversible_units_list
+        # prevent typing a value
+        self.convertion_unit_list_entry['state'] = 'readonly'
+        self.convertion_unit_list_entry.grid(row=4, column=0, sticky="")
 
         # self.convertion_unit_list = ttk.Combobox(self, textvariable=self.convertion_unit)
 
         # get first 3 letters of every month name
         # self.convertion_unit_list['values'] = ['dbm','dbu','dbr','wat','mwt'] # TODO: get this from the domain
 
+        self.converted_value_label = ttk.Label(text="para ==> ")
+        self.converted_value_label.grid(row=4, column=1)
+
         self.convertion_unit_list = ttk.Combobox(self, textvariable=self.convertion_unit)
         self.convertion_unit_list['values'] = self._conversible_units_list
         # prevent typing a value
         self.convertion_unit_list['state'] = 'readonly'
-        self.convertion_unit_list.pack(padx=5, pady=5)
+        self.convertion_unit_list.grid(row=4, column=2, sticky="")
         # self.convertion_unit_list.bind('<<ComboboxSelected>>', self.uni_changed)
 
         self.converted_value_label = ttk.Label(text="Valor convertido:")
-        self.converted_value_label.pack(fill=tk.X, padx=5, pady=5)
+        self.converted_value_label.grid(row=6, column=0, sticky="")
 
         self.convert_button = Button(
             self, text="Converter", command=self.convert)
-        self.convert_button.pack()
+        self.convert_button.grid()
 
     # bind the selected value changes
     # def uni_changed(self, event) -> None:
@@ -127,7 +136,7 @@ class Application(tk.Tk):
         else:
             # Status
             label_Final = Label(self, text="Converter %s para %s" % (valueFrom, typeFrom))
-            label_Final.pack()
+            label_Final.grid()
 
             # self.convertion_unit_list = lita das unidades, valor = valor selecionado do combobox
             # valorEntrada = valor entrado pelo utilizador
@@ -137,7 +146,7 @@ class Application(tk.Tk):
                 # se alguem escolher a mesma unidade entrada é igual a saida
                 # Apresentar o valor
                 label_Final2 = Label(self, text="::= %s %s" % (x[0], typeFrom))
-                label_Final2.pack()
+                label_Final2.grid()
             elif search(self.convertion_unit_list['values'], x[1].lower()) and x[1].lower() != typeFrom.lower():
                 # calculo final
                 # aqui ira ficar a funcao de conversao
@@ -145,7 +154,7 @@ class Application(tk.Tk):
                 valorFinal = 12321322
                 # Apresentar o valor
                 label_Final2 = Label(self, text="::= %f %s" % (float(valorFinal), typeFrom))
-                label_Final2.pack()
+                label_Final2.grid()
 
         value = self._objectify(x[0], typeFrom)
         print(value)
