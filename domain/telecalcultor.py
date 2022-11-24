@@ -10,10 +10,10 @@ class Telecalculator(object):
         return DB(10 * math.log10(p1.value / p0.value))
 
     def dbm(self, p: Watt) -> DBM:
-        return DBM(30 + self.db(MiliWatt(1), p))
+        return DBM(30 + self.db(MiliWatt(1), p).value)
 
     def dbw(self, p: Watt) -> DBW:
-        return DBW(self.db(Watt(1), p))
+        return DBW(self.db(Watt(1), p).value)
 
     def dbu(self, v0: Volt, v1: Volt) -> DBU:
         """Returns the value in dBu, under the same resistance."""

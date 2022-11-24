@@ -1,6 +1,7 @@
 from typing import TypeVar
-
 Self = TypeVar('Self')
+
+from . import constants
 
 
 class TelecomUnit(object):
@@ -68,7 +69,7 @@ class TelecomUnit(object):
 
 class DBM(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dBM")
+        super().__init__(value, constants.DBM_SYMBOL)
 
 
 class Bell(DBM):
@@ -77,7 +78,7 @@ class Bell(DBM):
 
     @property
     def symbol(self) -> str:
-        return "B"
+        return constants.BELL_SYMBOL
 
     @property
     def value(self) -> float:
@@ -90,7 +91,7 @@ class DB(DBM):
 
     @property
     def symbol(self) -> str:
-        return f'dB'
+        return constants.DB_SYMBOL
 
     @property
     def value(self) -> float:
@@ -99,17 +100,17 @@ class DB(DBM):
 
 class DBW(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dBW")
+        super().__init__(value, constants.DBW_SYMBOL)
 
 
 class DBU(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dBU")
+        super().__init__(value, constants.DBU_SYMBOL)
 
 
 class DBR(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "dBR")
+        super().__init__(value, constants.DB_SYMBOL)
 
 
 class Linear(TelecomUnit):
@@ -119,7 +120,7 @@ class Linear(TelecomUnit):
 
 class Volt(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "V")
+        super().__init__(value, constants.VOLT_SYMBOL)
 
 
 class MiliVolt(Volt):
@@ -128,7 +129,7 @@ class MiliVolt(Volt):
 
     @property
     def symbol(self) -> str:
-        return f'm{super().symbol}'
+        return constants.MILIVOLT_SYMBOL
 
     @property
     def value(self) -> float:
@@ -141,7 +142,7 @@ class KiloVolt(Volt):
 
     @property
     def symbol(self) -> str:
-        return f'k{super().symbol}'
+        return constants.KILOVOLT_SYMBOL
 
     @property
     def value(self) -> float:
@@ -150,7 +151,7 @@ class KiloVolt(Volt):
 
 class Watt(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value, "W")
+        super().__init__(value, constants.WATT_SYMBOL)
 
 
 class MiliWatt(Watt):
@@ -159,7 +160,7 @@ class MiliWatt(Watt):
 
     @property
     def symbol(self) -> str:
-        return f'm{super().symbol}'
+        return constants.MILIWATT_SYMBOL
 
     @property
     def value(self) -> float:
@@ -172,11 +173,24 @@ class KiloWatt(Watt):
 
     @property
     def symbol(self) -> str:
-        return f'k{super().symbol}'
+        return constants.KILOWATT_SYMBOL
 
     @property
     def value(self) -> float:
         return super().value / 1000
 
 
-units_mapper: dict[str, TelecomUnit] = dict(dB=DB, dBM=DBM)
+units_mapper: dict[str, TelecomUnit] = {
+    constants.BELL_SYMBOL: Bell,
+    constants.DB_SYMBOL: DB,
+    constants.DBM_SYMBOL: DBM,
+    constants.DBU_SYMBOL: DBU,
+    constants.DBW_SYMBOL: DBW,
+    constants.DBR_SYMBOL: DBR,
+    constants.WATT_SYMBOL: Watt,
+    constants.KILOWATT_SYMBOL: KiloWatt,
+    constants.MILIWATT_SYMBOL: MiliWatt,
+    constants.VOLT_SYMBOL: Volt,
+    constants.KILOVOLT_SYMBOL: KiloVolt,
+    constants.MILIVOLT_SYMBOL: MiliVolt,
+}
