@@ -5,14 +5,12 @@ from tkinter import messagebox
 class Application(tk.Tk):
     DEFAULT_FONT = "Arial"
 
-    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0", width: int = 600, height: int = 600) -> None:
+    def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0") -> None:
         super(Application, self).__init__()
 
         self._title = title
         self._description = description
         self._version = version
-        self._width = width
-        self._height = height
 
         # self.geometry(f'{self._width}x{self._height}')
         self.resizable(False, False)
@@ -36,15 +34,15 @@ class Application(tk.Tk):
         self.mainloop()
 
     def __create_menu(self) -> None:
-        self.menu = tk.Menu(self)
+        self.menu = tk.Menu(self, font=f"{self.DEFAULT_FONT} 10")
 
-        item = tk.Menu(self.menu)
-        item.add_command(label='Contact us')
+        item = tk.Menu(self.menu, font=f"{self.DEFAULT_FONT} 10")
+        item.add_command(label='Contato')
         item.add_command(label=f'{self._title} {self._version}')
 
-        self.menu.add_cascade(label='File')
-        self.menu.add_cascade(label='Config')
-        self.menu.add_cascade(label='About', menu=item)
+        self.menu.add_cascade(label='Arquivo')
+        self.menu.add_cascade(label='Configurações')
+        self.menu.add_cascade(label='Sobre', menu=item)
 
         self.config(menu=self.menu)
 
@@ -52,7 +50,7 @@ class Application(tk.Tk):
         self.body_title = ttk.Label(self, text=self._description, font=f"{self.DEFAULT_FONT} 20 bold")
         self.body_title.grid(row=0, column=1, columnspan=2, pady=10, padx=30)
 
-        entries_validation_cmd = (self.register(self._validate_entry), '%d %P %W')
+        entries_validation_cmd = (self.register(self._validate_and_convert_callback), '%d %P %W')
 
         self.entry_1 = ttk.Entry(self, width=30, name='entry_1', font=f"{self.DEFAULT_FONT} 12")
         self.entry_1.config(validate='key', validatecommand=entries_validation_cmd)
@@ -79,12 +77,16 @@ class Application(tk.Tk):
     def _alert_user(self, message: str) -> str:
         return messagebox.showwarning(title='Atenção', message=message)
 
-    def _convert(self) -> None:
-        pass
+    def _convert(self, value: str, widget_name: str) -> bool:
+        #TODO: implement convertion
+        return True
 
-    def _validate_entry(self, value: str) -> bool:
+    def _validate_and_convert_callback(self, value: str) -> bool:
         INVALID_MESSAGE = 'Só é permitido introduzir valores numéricos'
         code, entry, widget = value.split()
+
+        widget = widget.strip()
+        widget = widget[1:] if widget.startswith('.') else widget
 
         valid = True
         if code == '1' or code == '0':
@@ -93,16 +95,16 @@ class Application(tk.Tk):
             else:
                 valid = entry.isnumeric() or (code == '0' and entry == '{}')
 
-        if 'entry_1' in widget:
+        if widget == 'entry_1':
             self.label_1.config(text=INVALID_MESSAGE if not valid else '')
-        elif 'entry_2' in widget:
+        elif widget == 'entry_2':
             self.label_2.config(text=INVALID_MESSAGE if not valid else '')
 
-        return valid
+        return self._convert(value, widget) if valid else valid
 
-    def _objectify(self, value: float | str, unit_ref: str) -> any or None:
+    def _objectify(self, value: int | float | str, unit_ref: str) -> any or None:
         """Converts the `value` param into a unit value object if it is possible, else return None."""
-        if unit_ref in self._conversible_units_list:
+        if unit_ref in self._conversible_units_list and isinstance(value, (int, float, str)):
             return self.units.units_mapper[unit_ref](float(value))
         return None
 
