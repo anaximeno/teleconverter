@@ -2,11 +2,17 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+from types import ModuleType
+
 
 class Application(tk.Tk):
     FIRST_ENTRY_ID_NAME = "entry_1"
     SECOND_ENTRY_ID_NAME = "entry_2"
     DEFAULT_FONT = "Arial"
+
+    telecalculator: ModuleType
+    teleconverter: ModuleType
+    units: ModuleType
 
     def __init__(self, title: str = "Kraki", description: str = "Conversor de Unidades", version: str = "0.1.0") -> None:
         super(Application, self).__init__()
@@ -28,18 +34,21 @@ class Application(tk.Tk):
         cls.telecalculator = telecalculator
         cls.units = units
 
-    @property
-    def _conversible_units_list(self) -> list[str]:
-        return [] if self.teleconverter is None else list(self.teleconverter.CONVERTION_MAPPER.keys())
+    @classmethod
+    def _unit_available_convertions(cls, unit: str) -> list[str]:
+        return [] if cls.teleconverter is None or unit not in cls.teleconverter.CONVERTION_MAPPER \
+                  else list(cls.teleconverter.CONVERTION_MAPPER[unit].keys())
 
-    def _unit_available_convertions(self, unit: str) -> list[str]:
-        return [] if self.teleconverter is None or unit not in self.teleconverter.CONVERTION_MAPPER \
-                  else list(self.teleconverter.CONVERTION_MAPPER[unit].keys())
-
-    def _get_convertion_method(self, convert_from: str, convert_to: str) -> any or None:
-        if convert_from in self.teleconverter.CONVERTION_MAPPER and convert_to in self.teleconverter.CONVERTION_MAPPER[convert_from]:
-                return self.teleconverter.CONVERTION_MAPPER[convert_from][convert_to]
+    @classmethod
+    def _get_convertion_method(cls, convert_from: str, convert_to: str) -> any or None:
+        if convert_from in cls.teleconverter.CONVERTION_MAPPER and convert_to in cls.teleconverter.CONVERTION_MAPPER[convert_from]:
+                return cls.teleconverter.CONVERTION_MAPPER[convert_from][convert_to]
         return None
+
+    @classmethod
+    @property
+    def _conversible_units_list(cls) -> list[str]:
+        return [] if cls.teleconverter is None else list(cls.teleconverter.CONVERTION_MAPPER.keys())
 
     def run(self) -> None:
         self.mainloop()
@@ -139,7 +148,7 @@ class Application(tk.Tk):
 
         return self._convert('' if entry == '{}' or entry == '-' else entry, widget) if valid else valid
 
-    def _handle_entry_unit_selected(self, _):
+    def _handle_entry_unit_selected(self, event) -> None:
         convert_to_unit = self.select_2.get()
         values = self._unit_available_convertions(self.select_1.get())
         self.select_2.config(values=values)
@@ -159,7 +168,7 @@ class Application(tk.Tk):
             return _vals[0].isnumeric() and (_vals[1].isnumeric() or _vals[1] == '')
         return value.isnumeric()
 
-    def _handle_entry_2_key_event(self, e) -> str:
+    def _handle_entry_2_key_event(self, event) -> str:
         return "break"
 
     def _number_of_decimal_places(self, value) -> int:
