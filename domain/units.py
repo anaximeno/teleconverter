@@ -180,7 +180,7 @@ class KiloWatt(Watt):
         return super().value / 1000
 
 
-units_mapper: dict[str, TelecomUnit] = {
+UNITS_MAPPER: dict[str, TelecomUnit] = {
     constants.BELL_SYMBOL: Bell,
     constants.DB_SYMBOL: DB,
     constants.DBM_SYMBOL: DBM,

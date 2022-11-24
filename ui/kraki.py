@@ -29,15 +29,15 @@ class Application(tk.Tk):
 
     @property
     def _conversible_units_list(self) -> list[str]:
-        return [] if self.teleconverter is None else list(self.teleconverter.convertion_mapper.keys())
+        return [] if self.teleconverter is None else list(self.teleconverter.CONVERTION_MAPPER.keys())
 
     def _unit_available_convertions(self, unit: str) -> list[str]:
-        return [] if self.teleconverter is None or unit not in self.teleconverter.convertion_mapper \
-                  else list(self.teleconverter.convertion_mapper[unit].keys())
+        return [] if self.teleconverter is None or unit not in self.teleconverter.CONVERTION_MAPPER \
+                  else list(self.teleconverter.CONVERTION_MAPPER[unit].keys())
 
     def _get_convertion_method(self, convert_from: str, convert_to: str) -> any or None:
-        if convert_from in self.teleconverter.convertion_mapper and convert_to in self.teleconverter.convertion_mapper[convert_from]:
-                return self.teleconverter.convertion_mapper[convert_from][convert_to]
+        if convert_from in self.teleconverter.CONVERTION_MAPPER and convert_to in self.teleconverter.CONVERTION_MAPPER[convert_from]:
+                return self.teleconverter.CONVERTION_MAPPER[convert_from][convert_to]
         return None
 
     def run(self) -> None:
@@ -146,7 +146,7 @@ class Application(tk.Tk):
     def _objectify(self, value: int | float | str, unit_ref: str) -> any or None:
         """Converts the `value` param into a unit value object if it is possible, else return None."""
         if unit_ref in self._conversible_units_list and isinstance(value, (int, float, str)):
-            return self.units.units_mapper[unit_ref](float(value))
+            return self.units.UNITS_MAPPER[unit_ref](float(value))
         return None
 
     def _is_valid_number(self, value: str) -> bool:

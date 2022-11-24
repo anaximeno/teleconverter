@@ -88,7 +88,7 @@ class Teleconvert(object):
         return cls.db_to_dbm(cls.bell_to_db(bell))
 
 
-convertion_mapper: dict[str, dict[str, any]] = {
+CONVERTION_MAPPER: dict[str, dict[str, any]] = {
     constants.DB_SYMBOL: {
         constants.DB_SYMBOL: Teleconvert.to_self,
         constants.DBM_SYMBOL: Teleconvert.db_to_dbm,
