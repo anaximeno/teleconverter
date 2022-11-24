@@ -12,11 +12,10 @@ class Application(tk.Tk):
         self._description = description
         self._version = version
 
-        # self.geometry(f'{self._width}x{self._height}')
         self.resizable(False, False)
         self.title(self._title)
 
-        # self.__create_menu()
+        #self.__create_menu()
         self.__create_body()
 
     @classmethod
@@ -60,8 +59,9 @@ class Application(tk.Tk):
         self.select_1['values'] = self._conversible_units_list
         self.select_1.grid(row=1, column=2)
         self.select_1.current(newindex=0 if self._conversible_units_list else None)
+        self.select_1.config(state="readonly")
         self.label_1 = ttk.Label(self, text='', font=f"{self.DEFAULT_FONT} 8", foreground='red')
-        self.label_1.grid(row=2, column=1, sticky=tk.E + tk.W)
+        self.label_1.grid(row=2, column=1, sticky=tk.E + tk.W, padx=4)
 
         self.entry_2 = ttk.Entry(self, width=30, name='entry_2', font=f"{self.DEFAULT_FONT} 12")
         self.entry_2.config(validate='key', validatecommand=entries_validation_cmd, state=tk.DISABLED)
@@ -71,8 +71,9 @@ class Application(tk.Tk):
         self.select_2['values'] = self._conversible_units_list
         self.select_2.grid(row=3, column=2)
         self.select_2.current(newindex=0 if self._conversible_units_list else None)
+        self.select_2.config(state="readonly")
         self.label_2 = ttk.Label(self, text='', font=f"{self.DEFAULT_FONT} 8", foreground='red')
-        self.label_2.grid(row=4, column=1, sticky=tk.E + tk.W)
+        self.label_2.grid(row=4, column=1, sticky=tk.E + tk.W, padx=4)
 
     def _alert_user(self, message: str) -> str:
         return messagebox.showwarning(title='Atenção', message=message)
@@ -100,7 +101,7 @@ class Application(tk.Tk):
         elif widget == 'entry_2':
             self.label_2.config(text=INVALID_MESSAGE if not valid else '')
 
-        return self._convert(value, widget) if valid else valid
+        return self._convert(entry[:-1] if entry.endswith('.') else entry, widget) if valid else valid
 
     def _objectify(self, value: int | float | str, unit_ref: str) -> any or None:
         """Converts the `value` param into a unit value object if it is possible, else return None."""
