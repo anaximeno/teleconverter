@@ -72,31 +72,13 @@ class DBM(TelecomUnit):
         super().__init__(value, constants.DBM_SYMBOL)
 
 
-class Bell(DBM):
+class Bell(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(10 * value + 30)
+        super().__init__(value, constants.BELL_SYMBOL)
 
-    @property
-    def symbol(self) -> str:
-        return constants.BELL_SYMBOL
-
-    @property
-    def value(self) -> float:
-        return (super().value - 30) / 10
-
-
-class DB(DBM):
+class DB(TelecomUnit):
     def __init__(self, value: float) -> None:
-        super().__init__(value + 30)
-
-    @property
-    def symbol(self) -> str:
-        return constants.DB_SYMBOL
-
-    @property
-    def value(self) -> float:
-        return super().value - 30
-
+        super().__init__(value, constants.DB_SYMBOL)
 
 class DBW(TelecomUnit):
     def __init__(self, value: float) -> None:
