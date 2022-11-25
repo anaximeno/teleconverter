@@ -1,7 +1,6 @@
+from . import constants
 from typing import TypeVar
 Self = TypeVar('Self')
-
-from . import constants
 
 
 class TelecomUnit(object):
@@ -76,9 +75,11 @@ class Bell(TelecomUnit):
     def __init__(self, value: float) -> None:
         super().__init__(value, constants.BELL_SYMBOL)
 
+
 class DB(TelecomUnit):
     def __init__(self, value: float) -> None:
         super().__init__(value, constants.DB_SYMBOL)
+
 
 class DBW(TelecomUnit):
     def __init__(self, value: float) -> None:

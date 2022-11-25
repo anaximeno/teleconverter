@@ -122,5 +122,5 @@ CONVERTION_MAPPER: dict[str, dict[str, any]] = {
         constants.DBM_SYMBOL: Teleconvert.watt_to_dbm,
         constants.DBW_SYMBOL: Teleconvert.watt_to_dbw,
     },
-    #TODO: finish KiloWatt, MiliWatt, Volt, MiliVolt, KiloVolt, DBR, DBU, etc.
+    # TODO: finish KiloWatt, MiliWatt, Volt, MiliVolt, KiloVolt, DBR, DBU, etc.
 }

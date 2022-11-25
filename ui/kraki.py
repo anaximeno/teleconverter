@@ -6,6 +6,8 @@ from types import ModuleType
 
 
 class Application(tk.Tk):
+    DEBUG: bool = True
+
     FIRST_ENTRY_ID_NAME = "entry_1"
     SECOND_ENTRY_ID_NAME = "entry_2"
     DEFAULT_FONT = "Arial"
@@ -24,7 +26,7 @@ class Application(tk.Tk):
         self.resizable(False, False)
         self.title(self._title)
 
-        #self.__create_menu()
+        # self.__create_menu()
         self.__create_body()
 
     @classmethod
@@ -37,12 +39,12 @@ class Application(tk.Tk):
     @classmethod
     def _unit_available_convertions(cls, unit: str) -> list[str]:
         return [] if cls.teleconverter is None or unit not in cls.teleconverter.CONVERTION_MAPPER \
-                  else list(cls.teleconverter.CONVERTION_MAPPER[unit].keys())
+            else list(cls.teleconverter.CONVERTION_MAPPER[unit].keys())
 
     @classmethod
     def _get_convertion_method(cls, convert_from: str, convert_to: str) -> any or None:
         if convert_from in cls.teleconverter.CONVERTION_MAPPER and convert_to in cls.teleconverter.CONVERTION_MAPPER[convert_from]:
-                return cls.teleconverter.CONVERTION_MAPPER[convert_from][convert_to]
+            return cls.teleconverter.CONVERTION_MAPPER[convert_from][convert_to]
         return None
 
     @classmethod
@@ -67,37 +69,50 @@ class Application(tk.Tk):
         self.config(menu=self.menu)
 
     def __create_body(self):
-        self.body_title = ttk.Label(self, text=self._description, font=f"{self.DEFAULT_FONT} 20 bold")
+        self.body_title = ttk.Label(
+            self, text=self._description, font=f"{self.DEFAULT_FONT} 20 bold")
         self.body_title.grid(row=0, column=1, columnspan=2, pady=10, padx=30)
 
-        entries_validation_cmd = (self.register(self._validate_and_convert_callback), '%d %P %W')
+        entries_validation_cmd = (self.register(
+            self._validate_and_convert_callback), '%d %P %W')
 
-        self.entry_1 = ttk.Entry(self, width=30, name=self.FIRST_ENTRY_ID_NAME, font=f"{self.DEFAULT_FONT} 12")
-        self.entry_1.config(validate='key', validatecommand=entries_validation_cmd)
+        self.entry_1 = ttk.Entry(
+            self, width=30, name=self.FIRST_ENTRY_ID_NAME, font=f"{self.DEFAULT_FONT} 12")
+        self.entry_1.config(
+            validate='key', validatecommand=entries_validation_cmd)
         self.entry_1.grid(row=1, column=1)
         self.select_1_value = tk.StringVar()
-        self.select_1 = ttk.Combobox(self, textvariable=self.select_1_value, width=5, font=f"{self.DEFAULT_FONT} 12")
+        self.select_1 = ttk.Combobox(
+            self, textvariable=self.select_1_value, width=5, font=f"{self.DEFAULT_FONT} 12")
         self.select_1['values'] = self._conversible_units_list
         self.select_1.grid(row=1, column=2)
         self.select_1.config(state="readonly")
-        self.select_1.bind('<<ComboboxSelected>>', self._handle_entry_unit_selected)
+        self.select_1.bind('<<ComboboxSelected>>',
+                           self._handle_entry_unit_selected)
         self.select_1.current(0 if self._conversible_units_list else None)
-        self.label_1 = ttk.Label(self, text='', font=f"{self.DEFAULT_FONT} 8", foreground='red')
+        self.label_1 = ttk.Label(
+            self, text='', font=f"{self.DEFAULT_FONT} 8", foreground='red')
         self.label_1.grid(row=2, column=1, sticky=tk.E + tk.W, padx=4)
 
         self.entry_2_value = tk.StringVar()
-        self.entry_2 = ttk.Entry(self, textvariable=self.entry_2_value, width=30, name=self.SECOND_ENTRY_ID_NAME, font=f"{self.DEFAULT_FONT} 12")
-        self.entry_2.config(validate='key', validatecommand=entries_validation_cmd)
+        self.entry_2 = ttk.Entry(self, textvariable=self.entry_2_value, width=30,
+                                 name=self.SECOND_ENTRY_ID_NAME, font=f"{self.DEFAULT_FONT} 12")
+        self.entry_2.config(
+            validate='key', validatecommand=entries_validation_cmd)
         self.entry_2.bind("<Key>", self._handle_entry_2_key_event)
         self.entry_2.grid(row=3, column=1)
         self.select_2_value = tk.StringVar()
-        self.select_2 = ttk.Combobox(self, textvariable=self.select_2_value, width=5, font=f"{self.DEFAULT_FONT} 12")
-        self.select_2['values'] = self._unit_available_convertions(self._conversible_units_list[0]) if self._conversible_units_list else []
+        self.select_2 = ttk.Combobox(
+            self, textvariable=self.select_2_value, width=5, font=f"{self.DEFAULT_FONT} 12")
+        self.select_2['values'] = self._unit_available_convertions(
+            self._conversible_units_list[0]) if self._conversible_units_list else []
         self.select_2.grid(row=3, column=2)
         self.select_2.config(state="readonly")
-        self.select_2.bind('<<ComboboxSelected>>', self._handle_entry_unit_selected)
+        self.select_2.bind('<<ComboboxSelected>>',
+                           self._handle_entry_unit_selected)
         self.select_2.current(0 if self._conversible_units_list else None)
-        self.label_2 = ttk.Label(self, text='', font=f"{self.DEFAULT_FONT} 8", foreground='red')
+        self.label_2 = ttk.Label(
+            self, text='', font=f"{self.DEFAULT_FONT} 8", foreground='red')
         self.label_2.grid(row=4, column=1, sticky=tk.E + tk.W, padx=4)
 
     def _alert_user(self, message: str) -> str:
@@ -119,16 +134,21 @@ class Application(tk.Tk):
                 value_from = self._objectify(value, convert_from_unit)
 
                 if value_from and (convert := self._get_convertion_method(convert_from_unit, convert_to_unit)):
-                    result = convert(value_from).value
-                    # result = round(result, self._number_of_decimal_places(value))
+                    converted_value_obj = convert(value_from)
+
+                    if self.DEBUG:
+                        print('%s = %s' % (value_from, converted_value_obj))
+
+                    result = converted_value_obj.value
                     result = int(result) if int(result) == result else result
                 else:
-                    self._alert_user(f'Erro durante a converção de {convert_from_unit!r} para {convert_to_unit!r}')
+                    self._alert_user(
+                        f'Erro durante a converção de {convert_from_unit!r} para {convert_to_unit!r}')
                     return False
 
             self.entry_2_value.set(result)
         elif widget_name == self.SECOND_ENTRY_ID_NAME:
-            pass # NOTE: this would be implemented for a bidirectional convertion
+            pass  # NOTE: this would be implemented for a bidirectional convertion
 
         return True
 
@@ -152,7 +172,8 @@ class Application(tk.Tk):
         convert_to_unit = self.select_2.get()
         values = self._unit_available_convertions(self.select_1.get())
         self.select_2.config(values=values)
-        self.select_2.current((values.index(convert_to_unit) if convert_to_unit in values else 0) if values else None)
+        self.select_2.current((values.index(
+            convert_to_unit) if convert_to_unit in values else 0) if values else None)
         self._convert(self.entry_1.get(), self.FIRST_ENTRY_ID_NAME)
 
     def _objectify(self, value: int | float | str, unit_ref: str) -> any or None:
